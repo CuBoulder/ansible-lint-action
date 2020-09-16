@@ -25,7 +25,7 @@ jobs:
       # replace "master" with any valid ref
       uses: ansible/ansible-lint-action@master
       with:
-        # [required]
+        # [optional]
         # Paths to ansible files (i.e., playbooks, tasks, handlers etc..)
         # or valid Ansible directories according to the Ansible role
         # directory structure.
@@ -33,13 +33,8 @@ jobs:
         # targets: |
         #   playbook_1.yml
         #   playbook_2.yml
+        # If no paths are set, ansible-lint will auto-discover
         targets: ""
-        # [optional]
-        # Arguments to override a package and its version to be set explicitly.
-        # Must follow the example syntax.
-        override-deps: |
-          ansible==2.9
-          ansible-lint==4.2.0
         # [optional]
         # Arguments to be passed to the ansible-lint
 

@@ -1,18 +1,28 @@
-FROM python:3.8-slim
+####################################
+## Dockerfile to run Anisble Lint ##
+####################################
+FROM python:alpine
 
-LABEL "maintainer"="Ansible by Red Hat <info@ansible.com>"
-LABEL "repository"="https://github.com/ansible/ansible-lint-action"
-LABEL "homepage"="https://github.com/ansible/ansible-lint-action"
+#########################################
+# Label the instance and set maintainer #
+#########################################
+LABEL com.github.actions.name="Ansible Lint" \
+    com.github.actions.description="Lint your code base with Ansible Lint" \
+    com.github.actions.icon="code" \
+    com.github.actions.color="red" \
+    maintainer="CU Boulder"
 
-LABEL "com.github.actions.name"="ansible-lint"
-LABEL "com.github.actions.description"="Run Ansible Lint"
-LABEL "com.github.actions.icon"="activity"
-LABEL "com.github.actions.color"="gray-dark"
+RUN apk add --update --no-cache \
+    bash \
+    gcc \
+    git git-lfs \
+    py3-setuptools \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    python3-dev
 
-# Install git (required by ansible-lint)
-RUN set -ex && apt-get update && apt-get -q install -y -V git && rm -rf /var/lib/apt/lists/*
-
-RUN pip install ansible-lint
+RUN pip3 install ansible-lint
 
 COPY entrypoint.sh /entrypoint.sh
 

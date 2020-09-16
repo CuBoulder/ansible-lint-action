@@ -1,7 +1,25 @@
 #! /usr/bin/env bash
+#########################
+#### Function Header ####
+#########################
+Header() {
+  version=$(ansible-lint --version)
+  echo "---------------------------------------------"
+  echo "---------- Running Ansible Lint -------------"
+  echo "---------- [${version}] -------------"
+  echo "---------------------------------------------"
+}
+
+#########################
+#### Function Footer ####
+#########################
+Footer() {
+  echo "---------------------------------------------"
+  echo "--------------- All done! -------------------"
+  echo "---------------------------------------------"
+}
 
 set -Eeuo pipefail
-set -x
 
 # Filter out arguments that are not available to this action
 # args:
@@ -71,35 +89,25 @@ parse_args() {
   return 0
 }
 
-override_python_packages() {
-  [[ -n "${OVERRIDE}" ]] && pip install ${OVERRIDE} && pip check
-  >&2 echo "Completed installing override dependencies..."
-}
-
 # Generates client.
 # args:
 #   $@: additional options
 # env:
-#   [required] TARGETS : Files or directories (i.e., playbooks, tasks, handlers etc..) to be linted
+#   [optional] TARGETS : Files or directories (i.e., playbooks, tasks, handlers etc..) to be linted
 ansible::lint() {
-  : "${TARGETS?No targets to check. Nothing to do.}"
   : "${GITHUB_WORKSPACE?GITHUB_WORKSPACE has to be set. Did you use the actions/checkout action?}"
+  # Go to the workspace directory
   pushd "${GITHUB_WORKSPACE}"
-
-  override_python_packages
   local opts
   opts=$(parse_args $@ || exit 1)
-
-  # Enable recursive glob patterns, such as '**/*.yml'.
-  shopt -s globstar
   ansible-lint -v --force-color $opts ${TARGETS}
-  shopt -u globstar
 }
 
 
 args=("$@")
 
 if [ "$0" = "${BASH_SOURCE[*]}" ] ; then
-  >&2 echo -E "\nRunning Ansible Lint...\n"
+  Header
   ansible::lint "${args[@]}"
+  Footer
 fi
