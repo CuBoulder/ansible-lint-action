@@ -100,6 +100,9 @@ ansible::lint() {
   pushd "${GITHUB_WORKSPACE}"
   local opts
   opts=$(parse_args $@ || exit 1)
+  if [ -f "requirements.yaml" ]; then
+    ansible-galaxy collection install -r requirements.yaml
+  fi
   ansible-lint -v --force-color $opts ${TARGETS}
 }
 
